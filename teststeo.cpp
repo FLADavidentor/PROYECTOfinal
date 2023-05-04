@@ -3,7 +3,8 @@
 #include <vector>
 using namespace std;
 
-class Producto
+/*DECLARACION D LA ESTRUCTURA DE DATOS*/
+struct Producto
 {
     string nombre;
     float precio;
@@ -32,6 +33,7 @@ public:
     }
 };
 
+/*SI EL PROGRAMA TIENE UN VALOR NUEVO DENTRO DL VECTOR ENTONCES SE GUARDA AL "INVENTARIO.TXT"*/
 void guardarArchivo(const vector<Producto> &productos)
 {
     ofstream archivo;
@@ -46,6 +48,7 @@ void guardarArchivo(const vector<Producto> &productos)
     }
 }
 
+/*ASIGNACION DEL VECTOR A PARTIR DEL ARCHIVO "INVENTARIO.TXT"*/
 vector<Producto> leerArchivo()
 {
     vector<Producto> productos;
@@ -63,10 +66,12 @@ vector<Producto> leerArchivo()
     return productos;
 }
 
+/*MAIN*/
 int main()
 {
     vector<Producto> productos = leerArchivo();
     int opc;
+    /*FUNCION SWITCH*/
     do
     {
         cout << "\n1. Agregar producto" << endl;
