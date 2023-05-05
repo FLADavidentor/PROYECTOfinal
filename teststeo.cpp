@@ -3,75 +3,154 @@
 #include <vector>
 using namespace std;
 
-/*DECLARACION D LA ESTRUCTURA DE DATOS*/
 struct Producto
 {
     string nombre;
     float precio;
+    string descripcion;
 
-public:
-    Producto(string nombre, float precio)
-    {
-        this->nombre = nombre;
-        this->precio = precio;
-    }
-
-    string getNombre() const
-    {
-        return nombre;
-    }
-
-    float getPrecio() const
-    {
-        return precio;
-    }
-
+    /*Usamos una funcion operator para que cuando tratemos de imprimir el objeto "Producto" imprima de cierta forma especifica.
+     *El friend es para dar permisos de que cada vez que se llame el vector Producto en el codigo para imprimirse, se imprima de la manera que dice el operator
+     *El return os; es para poder encadenar varias impresiones, y al ser un vector de varias lineas es necesario ponerlo
+     *ostream se utiliza para enviar datos desde un programa a una salida, como por ejemplo la consola o un archivo de texto.*/
     friend ostream &operator<<(ostream &os, const Producto &p)
     {
-        os << p.nombre << " - $" << p.precio << endl;
+        os << p.nombre << " - $" << p.precio << " \n- " << p.descripcion << endl;
         return os;
     }
 };
 
-/*SI EL PROGRAMA TIENE UN VALOR NUEVO DENTRO DL VECTOR ENTONCES SE GUARDA AL "INVENTARIO.TXT"*/
-void guardarArchivo(const vector<Producto> &productos)
+/** Guarda los productos en el archivo "inventario.txt". */
+void guardarArchivo(const vector<Producto> &inventario)
 {
-    ofstream archivo;
-    archivo.open("inventario.txt");
+    ofstream archivo("inventario.txt");
     if (archivo.is_open())
     {
-        for (const Producto &p : productos)
+        for (auto const &p : inventario)/*auto const es una forma de declarar una variable de forma que su tipo sea deducido automáticamente por el compilador, y además se indique que dicha variable es constante.*/
         {
-            archivo << p.getNombre() << " " << p.getPrecio() << endl;
+            archivo << p.nombre << " " << p.precio << " " << p.descripcion << endl;
         }
         archivo.close();
     }
 }
 
-/*ASIGNACION DEL VECTOR A PARTIR DEL ARCHIVO "INVENTARIO.TXT"*/
+/** Lee los productos del archivo "inventario.txt" y los retorna en un vector. */
 vector<Producto> leerArchivo()
 {
-    vector<Producto> productos;
+    vector<Producto> inventario;
     ifstream archivo("inventario.txt");
     if (archivo.is_open())
     {
-        string nombre;
+        string nombre, descripcion;
         float precio;
-        while (archivo >> nombre >> precio)
+        /** Lee los datos del archivo y crea un objeto Producto para cada línea leída.
+         * El while que rodea esta línea de código se utiliza para leer todas las líneas del archivo inventario.txt hasta el final, mientras se almacenan los valores de las variables nombre, precio y descripcion en un objeto de tipo Producto que se agrega al vector inventario.*/
+        while (archivo >> nombre >> precio >> ws && getline(archivo, descripcion))/*ws es para ignorar cualquier espacio en blanco como lo son espacios, saltos de linea, etc*/
         {
-            productos.push_back(Producto(nombre, precio));
+            inventario.push_back(Producto{nombre, precio, descripcion});
         }
         archivo.close();
     }
-    return productos;
+    return inventario;
 }
 
-/*MAIN*/
+/** Agrega un nuevo producto al vector de productos. */
+void agregarProducto(vector<Producto> &inventario)
+{
+    string nombre, descripcion;
+    float precio;
+    cout << "Nombre: ";
+    cin >> nombre;
+    cout << "Precio: ";
+    cin >> precio;
+    cin.ignore(); // Ignorar el salto de línea dejado por cin
+    cout << "Descripcion: ";
+    getline(cin, descripcion);
+    inventario.push_back(Producto{nombre, precio, descripcion});/*los "{}" son esteticos, se pudieron haber usado "()"*/
+    cout << "Producto agregado" << endl;
+}
+
+/** Imprime todos los productos en el vector de productos. */
+void mostrarInventario(const vector<Producto> &inventario)
+{
+    if (inventario.empty())
+    {
+        cout << "No hay productos en el inventario" << endl;
+    }
+    else
+    {
+        for (auto const &p : inventario)
+        {
+            cout << p << endl;
+        }
+    }
+}
+
+/** Busca un producto por su nombre en el vector de productos y lo imprime en la salida estándar. */
+void buscarProducto(const vector<Producto> &inventario)
+{
+    if (inventario.empty())
+    {
+        cout << "No hay productos en el inventario" << endl;
+    }
+    else
+    {
+        string nombre;
+        cout << "Nombre del producto: ";
+        cin >> nombre;
+        bool encontrado = false;
+        for (auto const &p : inventario)/*auto const es una forma de declarar una variable de forma que su tipo sea deducido automáticamente por el compilador, y además se indique que dicha variable es constante.*/
+        {
+            if (p.nombre == nombre)
+            {
+                cout << p << endl;
+                encontrado = true;
+                break;
+            }
+        }
+        if (!encontrado)
+        {
+            cout << "Producto no encontrado" << endl;
+        }
+    }
+}
+
+/** Elimina un producto por su nombre del vector de productos. */
+void borrarProducto(vector<Producto> &inventario)
+{
+    if (inventario.empty())
+    {
+        cout << "No hay productos en el inventario" << endl;
+    }
+    else
+    {
+        string nombre;
+        cout << "Nombre del producto a eliminar: ";
+        cin >> nombre;
+        bool encontrado = false;
+        /** Itera sobre el vector de productos y elimina el producto si su nombre coincide con el nombre proporcionado.
+         * Iterar es la funcion de recorrer los elementos de en este caso el vector inventario uno por uno, es decir, el for lo que hace es recorrer una sola vez de forma completa todo el vector inventario y si encuentra una coincidencia con el nombre proporcionado entonces borra la linea completa del vector.*/
+        for (auto it = inventario.begin(); it != inventario.end(); ++it)
+        {
+            if (it->nombre == nombre)
+            {
+                inventario.erase(it);
+                encontrado = true;
+                cout << "Producto eliminado" << endl;
+                break;
+            }
+        }
+        if (!encontrado)
+        {
+            cout << "Producto no encontrado" << endl;
+        }
+    }
+}
+
 int main()
 {
-    vector<Producto> productos = leerArchivo();
+    vector<Producto> inventario = leerArchivo();
     int opc;
-    /*FUNCION SWITCH*/
     do
     {
         cout << "\n1. Agregar producto" << endl;
@@ -81,98 +160,31 @@ int main()
         cout << "0. Salir" << endl;
         cout << "Opcion: ";
         cin >> opc;
-        if (opc == 1)
+        system("cls");
+        switch (opc)
         {
-            string nombre;
-            float precio;
-            system("cls");
-            cout << "Nombre: ";
-            cin >> nombre;
-            cout << "Precio: ";
-            cin >> precio;
-            productos.push_back(Producto(nombre, precio));
-            cout << "Producto agregado" << endl;
-        }
-        else if (opc == 2)
-        {
-            if (productos.empty())
-            {
-                system("cls");
-                cout << "\nNo hay productos en el inventario" << endl;
-            }
-            else
-            {
-                system("cls");
-                for (const Producto &p : productos)
-                {
-                    cout <<"\n"<< p;
-                }
-            }
-        }
-        else if (opc == 3)
-        {
-            if (productos.empty())
-            {
-                cout << "\nNo hay productos en el inventario" << endl;
-            }
-            else
-            {
-                string nombre;
-                system("cls");
-                cout << "\nNombre del producto: ";
-                cin >> nombre;
-                bool encontrado = false;
-                for (const Producto &p : productos)
-                {
-                    if (p.getNombre() == nombre)
-                    {
-                        cout << p;
-                        encontrado = true;
-                        break;
-                    }
-                }
-                if (!encontrado)
-                {
-                    cout << "\nProducto no encontrado" << endl;
-                }
-            }
-        }
-        else if (opc == 4)
-        {
-            if (productos.empty())
-            {
-                system("cls");
-                cout << "\nNo hay productos en el inventario" << endl;
-            }
-            else
-            {
-                string nombre;
-                cout << "\nNombre del producto a eliminar: ";
-                cin >> nombre;
-                bool encontrado = false;
-                for (vector<Producto>::iterator it = productos.begin(); it != productos.end(); ++it)
-                {
-                    if (it->getNombre() == nombre)
-                    {
-                        system("cls");
-                        productos.erase(it);
-                        encontrado = true;
-                        system("cls");
-                        cout << "Producto eliminado" << endl;
-                        break;
-                    }
-                }
-                if (!encontrado)
-                {
-                    cout << "Producto no encontrado" << endl;
-                }
-            }
-        }
-        else if (opc != 0)
-        {
-            cout << "Opcion no valida" << endl;
+            /** Agrega un nuevo producto al vector de inventario. */
+            case 1:
+                agregarProducto(inventario);
+                break;
+            /** Imprime todos los productos en el vector de inventario. */
+            case 2:
+                mostrarInventario(inventario);
+                break;
+            /** Busca un producto por su nombre en el vector de productos y lo imprime en la salida estándar. */
+            case 3:
+                buscarProducto(inventario);
+                break;
+            /** Elimina un producto por su nombre del vector de inventario. */
+            case 4:
+                borrarProducto(inventario);
+                break;
+            case 0:
+                break;
+            default:
+                cout << "Opcion no valida" << endl;
         }
     } while (opc != 0);
-    guardarArchivo(productos);
+    guardarArchivo(inventario);
     return 0;
 }
