@@ -6,6 +6,7 @@ using namespace std;
 struct Producto
 {
     string nombre;
+    int existencias = 0;
     float precio;
     string descripcion;
 
@@ -15,7 +16,7 @@ struct Producto
      *ostream se utiliza para enviar datos desde un programa a una salida, como por ejemplo la consola o un archivo de texto.*/
     friend ostream &operator<<(ostream &os, const Producto &p)
     {
-        os << p.nombre << " - $" << p.precio << " \n- " << p.descripcion << endl;
+        os << p.nombre << " - $" << p.precio << "\nexistencias: " << p.existencias << " \n- " << p.descripcion << endl;
         return os;
     }
 };
@@ -26,9 +27,9 @@ void guardarArchivo(const vector<Producto> &inventario)
     ofstream archivo("inventario.txt");
     if (archivo.is_open())
     {
-        for (auto const &p : inventario)/*auto const es una forma de declarar una variable de forma que su tipo sea deducido automáticamente por el compilador, y además se indique que dicha variable es constante.*/
+        for (auto const &p : inventario) /*auto const es una forma de declarar una variable de forma que su tipo sea deducido automáticamente por el compilador, y además se indique que dicha variable es constante.*/
         {
-            archivo << p.nombre << " " << p.precio << " " << p.descripcion << endl;
+            archivo << p.nombre << " " << p.existencias << " " << p.precio << " " << p.descripcion << endl;
         }
         archivo.close();
     }
@@ -43,11 +44,12 @@ vector<Producto> leerArchivo()
     {
         string nombre, descripcion;
         float precio;
+        int existencias = 0;
         /** Lee los datos del archivo y crea un objeto Producto para cada línea leída.
          * El while que rodea esta línea de código se utiliza para leer todas las líneas del archivo inventario.txt hasta el final, mientras se almacenan los valores de las variables nombre, precio y descripcion en un objeto de tipo Producto que se agrega al vector inventario.*/
-        while (archivo >> nombre >> precio >> ws && getline(archivo, descripcion))/*ws es para ignorar cualquier espacio en blanco como lo son espacios, saltos de linea, etc*/
+        while (archivo >> nombre >> existencias >> precio >> ws && getline(archivo, descripcion)) /*ws es para ignorar cualquier espacio en blanco como lo son espacios y saltos de linea*/
         {
-            inventario.push_back(Producto{nombre, precio, descripcion});
+            inventario.push_back(Producto{nombre, existencias, precio, descripcion});
         }
         archivo.close();
     }
@@ -59,14 +61,17 @@ void agregarProducto(vector<Producto> &inventario)
 {
     string nombre, descripcion;
     float precio;
+    int existencias = 0;
     cout << "Nombre: ";
     cin >> nombre;
     cout << "Precio: ";
     cin >> precio;
+    cout << "Existencias: ";
+    cin >> existencias;
     cin.ignore(); // Ignorar el salto de línea dejado por cin
     cout << "Descripcion: ";
     getline(cin, descripcion);
-    inventario.push_back(Producto{nombre, precio, descripcion});/*los "{}" son esteticos, se pudieron haber usado "()"*/
+    inventario.push_back(Producto{nombre, existencias, precio, descripcion}); /*los "{}" son esteticos, se pudieron haber usado "()"*/
     cout << "Producto agregado" << endl;
 }
 
@@ -99,7 +104,7 @@ void buscarProducto(const vector<Producto> &inventario)
         cout << "Nombre del producto: ";
         cin >> nombre;
         bool encontrado = false;
-        for (auto const &p : inventario)/*auto const es una forma de declarar una variable de forma que su tipo sea deducido automáticamente por el compilador, y además se indique que dicha variable es constante.*/
+        for (auto const &p : inventario) /*auto const es una forma de declarar una variable de forma que su tipo sea deducido automáticamente por el compilador, y además se indique que dicha variable es constante.*/
         {
             if (p.nombre == nombre)
             {
@@ -163,26 +168,26 @@ int main()
         system("cls");
         switch (opc)
         {
-            /** Agrega un nuevo producto al vector de inventario. */
-            case 1:
-                agregarProducto(inventario);
-                break;
-            /** Imprime todos los productos en el vector de inventario. */
-            case 2:
-                mostrarInventario(inventario);
-                break;
-            /** Busca un producto por su nombre en el vector de productos y lo imprime en la salida estándar. */
-            case 3:
-                buscarProducto(inventario);
-                break;
-            /** Elimina un producto por su nombre del vector de inventario. */
-            case 4:
-                borrarProducto(inventario);
-                break;
-            case 0:
-                break;
-            default:
-                cout << "Opcion no valida" << endl;
+        /** Agrega un nuevo producto al vector de inventario. */
+        case 1:
+            agregarProducto(inventario);
+            break;
+        /** Imprime todos los productos en el vector de inventario. */
+        case 2:
+            mostrarInventario(inventario);
+            break;
+        /** Busca un producto por su nombre en el vector de productos y lo imprime en la salida estándar. */
+        case 3:
+            buscarProducto(inventario);
+            break;
+        /** Elimina un producto por su nombre del vector de inventario. */
+        case 4:
+            borrarProducto(inventario);
+            break;
+        case 0:
+            break;
+        default:
+            cout << "Opcion no valida" << endl;
         }
     } while (opc != 0);
     guardarArchivo(inventario);
