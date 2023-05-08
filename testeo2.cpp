@@ -14,6 +14,7 @@ int main()
     cout << "Nombre de Usuario: ";
     cin >> usuarionum;
     cout << "Contrasenia: ";
+    cin >> contrasenianum;
     bool encontradousuario = false;
     for (auto const &u : Credenciales) /*auto const es una forma de declarar una variable de forma que su tipo sea deducido automáticamente por el compilador, y además se indique que dicha variable es constante.*/
     {
