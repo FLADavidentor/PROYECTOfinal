@@ -55,6 +55,7 @@ int main()
                     cout << "Opcion no valida\n";
                 }
             } while (opcion != 5);
+            encontradousuario=true;
         }
     }
     if (!encontradousuario)
