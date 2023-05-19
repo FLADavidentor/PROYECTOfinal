@@ -39,6 +39,7 @@ int main()
                     guardarArchivo(inventario);
                     break;
                 case 2:
+
                     modificarProducto(inventario);
                     guardarArchivo(inventario);
                     break;
@@ -55,7 +56,7 @@ int main()
                     cout << "Opcion no valida\n";
                 }
             } while (opcion != 5);
-            encontradousuario=true;
+            encontradousuario = true;
         }
     }
     if (!encontradousuario)
