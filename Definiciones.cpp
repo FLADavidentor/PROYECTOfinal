@@ -3,6 +3,13 @@
 #include <vector>
 using namespace std;
 
+struct EntSal
+{
+    string fecha;
+    int entradas = 0, salidas = 0;
+    int valorpred = 0;
+
+};
 struct Usuario
 {
     string usuario;
@@ -35,7 +42,8 @@ void guardarArchivo(const vector<Producto> &inventario)
     {
         for (auto const &p : inventario)
         {
-            archivo << p.nombre << " " << p.existencias << " " << p.precio << " " << p.descripcion << endl;
+            archivo << p.nombre << "\n"
+                    << p.existencias << " " << p.precio << " " << p.descripcion << endl;
         }
         archivo.close();
     }
@@ -87,11 +95,10 @@ vector<Producto> leerArchivo()
         int existencias = 0;
         /** Lee los datos del archivo y crea un objeto Producto para cada línea leída.
          * El while que rodea esta línea de código se utiliza para leer todas las líneas del archivo inventario.txt hasta el final, mientras se almacenan los valores de las variables nombre, precio y descripcion en un objeto de tipo Producto que se agrega al vector inventario.*/
-        while (archivo >> nombre >> existencias >> precio >> ws && getline(archivo, descripcion))
+        while (getline(archivo, nombre) && archivo >> existencias >> precio >> ws && getline(archivo, descripcion))
         {
             inventario.push_back(Producto{nombre, existencias, precio, descripcion});
         }
-        archivo.close();
     }
     return inventario;
 }
