@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <windows.h>
 using namespace std;
 
 struct EntSal
@@ -47,6 +48,16 @@ void guardarArchivo(const vector<Producto> &inventario)
         }
         archivo.close();
     }
+}
+
+void gotoxy(int x, int y)
+{
+
+    HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD dwPos;
+    dwPos.X = x;
+    dwPos.Y = y;
+    SetConsoleCursorPosition(hcon, dwPos);
 }
 
 /** Guarda los usuarios en el archivo "Credenciales.txt". */
@@ -125,11 +136,13 @@ void agregarProducto(vector<Producto> &inventario)
 void modificarProducto(vector<Producto> &inventario)
 {
     int opcion;
+
     cout << "¿Que producto deseas modificar?\n";
     for (int i = 0; i < inventario.size(); i++)
     {
         cout << i + 1 << ". " << inventario[i].nombre << endl;
     }
+
     cin >> opcion;
     opcion--;
     cout << "Nombre: ";

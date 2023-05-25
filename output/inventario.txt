@@ -1,4 +1,8 @@
 flores 12 200 nose son rosas
-xiaomi 5 20 celular xiaomi blabla
+holaa 3 13 fada
 P0C0 3 315.57 Xiaomi Gaming
+<<<<<<< HEAD
 ProductoNulo 0 0 Valores nulos de prueba
+=======
+hola 34 25 fxgz
+>>>>>>> 15ede8ea32214831b770038850d7203ed566b6b8
