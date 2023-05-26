@@ -1,5 +1,4 @@
 #include <iostream>
-#include "auxiliar.h"
 #include "Inventariocel.cpp"
 
 int main()
